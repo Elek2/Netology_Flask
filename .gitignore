@@ -8,7 +8,7 @@ instance/*
 .env
 venv/
 
-.idea
+/.idea/
 
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files
@@ -64,6 +64,7 @@ coverage.xml
 .pytest_cache/
 cover/
 
+advert.py
 
 
 
