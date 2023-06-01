@@ -1,7 +1,7 @@
 from datetime import datetime
 import os
 
-from sqlalchemy import create_engine, MetaData, Integer, String, \
+from sqlalchemy import create_engine, Integer, String, \
     Column, DateTime, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
@@ -20,7 +20,7 @@ engine = create_engine(DNS)
 if not database_exists(engine.url):
     create_database(engine.url)
 Base = declarative_base(bind=engine)
-session = sessionmaker(bind=engine)
+Session = sessionmaker(bind=engine)
 
 class User(Base):
     __tablename__ = 'users'
@@ -28,7 +28,7 @@ class User(Base):
     username = Column(String(100), nullable=False)
     password = Column(String(100), nullable=False)
     created_on = Column(DateTime(), default=datetime.now)
-    advertisements = relationship('Advertisement')
+    advertisements = relationship('Advertisement', back_populates="users")
 
 
 class Advertisement(Base):
@@ -38,6 +38,7 @@ class Advertisement(Base):
     description = Column(String(100))
     created_on = Column(DateTime(), default=datetime.now)
     author_id = Column(ForeignKey('users.id'))
+    users = relationship('User', back_populates="advertisements")
 
 
 Base.metadata.create_all(engine)
