@@ -1,4 +1,5 @@
 from datetime import datetime
+import atexit
 import os
 
 from sqlalchemy import create_engine, Integer, String, \
@@ -21,6 +22,7 @@ if not database_exists(engine.url):
     create_database(engine.url)
 Base = declarative_base(bind=engine)
 Session = sessionmaker(bind=engine)
+atexit.register(engine.dispose)  # Автоматическое удаление движка при завершении работы
 
 class User(Base):
     __tablename__ = 'users'
