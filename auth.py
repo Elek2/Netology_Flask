@@ -1,10 +1,18 @@
+import hashlib
+import os
+
 from flask import g
 from flask_httpauth import HTTPBasicAuth
 
-from hash import hash_password
-from models import User, Session
+from models import Session, User
 
 basic_auth = HTTPBasicAuth()
+
+
+def hash_password(password):
+    password += os.getenv("USER_PASSWORD_SALT")
+    password = password.encode()
+    return hashlib.md5(password).hexdigest()
 
 
 @basic_auth.verify_password
