@@ -11,3 +11,15 @@ def twosum(nums: list[int], target: int) -> list[int]:
 
 
 print(twosum(case1, 6))
+
+import hashlib
+
+strstr = "yurayura"
+strstr2 = "yurayura2"
+
+out = hashlib.md5(strstr.encode())
+out2 = hashlib.md5(strstr2.encode())
+
+print(out.hexdigest())
+print(out2.hexdigest())
+print(out.hexdigest() == out2.hexdigest())

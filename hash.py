@@ -1,8 +1,11 @@
 import hashlib
 
-SALT = "sada r32r 8#&Y 78"
+SALT = "sAda r32r 8#&Y 78"
 
 def hash_password(password):
     password += SALT
     password = password.encode()
-    return str(hashlib.md5(password))
+    return hashlib.md5(password).hexdigest()
+
+def check_password(password):
+    return hash_password()

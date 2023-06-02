@@ -1,8 +1,11 @@
-from flask import Flask, jsonify, request
-from flask.views import MethodView
 import json
+
+from flask import Flask, jsonify, request, g
+from flask.views import MethodView
+
+from auth import basic_auth
 from hash import hash_password
-from models import Session, User, Advertisement
+from models import Advertisement, Session, User
 
 app = Flask(__name__)
 
@@ -24,7 +27,6 @@ class UserClass(MethodView):
                 user_data['id'] = user.id
                 user_data['name'] = user.username
                 user_data['password'] = user.password
-                user_data['date'] = user.created_on
                 user_list.append(user_data)
 
             return json.dumps(jsonify(user_list).json, indent=2)
@@ -39,6 +41,7 @@ class UserClass(MethodView):
             user_data = dict()
             user_data['id'] = new_user.id
             user_data['name'] = new_user.username
+            user_data['email'] = new_user.email
             user_data['password'] = new_user.password
             return user_data
 
@@ -60,9 +63,12 @@ class AdvertClass(MethodView):
 
             return json.dumps(jsonify(adv_list).json, indent=2)
 
+    @basic_auth.login_required
     def post(self):
         with Session() as s:
             new_adv = Advertisement(**request.json)
+            new_adv.author_id = g.current_user.id
+
             s.add(new_adv)
             s.commit()
 
@@ -82,7 +88,6 @@ class AdvertClass(MethodView):
 
 
 adv_view = AdvertClass.as_view('adv')
-
 
 app.add_url_rule('/user/', view_func=UserClass.as_view('user'), methods=['GET', 'POST'])
 app.add_url_rule('/adv/<int:adv_id>', view_func=adv_view, methods=['DELETE'])
